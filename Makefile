@@ -19,7 +19,7 @@ TESTDIR       := $(BASEDIR)/test
 TEMPDIR       := $(BASEDIR)/tmp
 
 # Flags
-RUSTCFLAGS    := -O -L $(BUILDDIR)/
+RUSTCFLAGS    := -O -g -L $(BUILDDIR)/
 RMFLAGS       :=
 
 # Handle config setup

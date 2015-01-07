@@ -67,7 +67,7 @@ impl Range {
             let j = i + 1;
 
             while j < ranges.len() && ranges[j].low <= ranges[i].high {
-                let j_high = ranges.remove(j).unwrap().high;
+                let j_high = ranges.remove(j).high;
                 ranges[i].high = max(ranges[i].high, j_high);
             }
         }

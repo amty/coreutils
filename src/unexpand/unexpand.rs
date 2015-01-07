@@ -122,7 +122,7 @@ fn open(path: String) -> io::BufferedReader<Box<Reader+'static>> {
 fn is_tabstop(tabstops: &[uint], col: uint) -> bool {
     match tabstops {
         [tabstop] => col % tabstop == 0,
-        tabstops => tabstops.binary_search(|&e| e.cmp(&col)).found().is_some()
+        tabstops => tabstops.binary_search(&col).is_ok()
     }
 }
 

@@ -89,7 +89,7 @@ Each MODE is of the form '[ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=]?[0-7]+'.",
         });
         let cmode =
             if fmode.is_none() {
-                let mode = matches.free.remove(0).unwrap();  // there are at least two elements
+                let mode = matches.free.remove(0);  // there are at least two elements
                 match verify_mode(mode.as_slice()) {
                     Ok(_) => Some(mode),
                     Err(f) => {

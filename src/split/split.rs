@@ -126,7 +126,7 @@ struct SplitControl {
 
 trait Splitter {
     // Factory pattern
-    fn new(_hint: Option<Self>, &Settings) -> Box<Splitter>;
+//    fn new(_hint: Option<Self>, &Settings) -> Box<Splitter>;
 
     // Consume the current_line and return the consumed string
     fn consume(&mut self, &mut SplitControl) -> String;
@@ -136,9 +136,8 @@ struct LineSplitter {
     saved_lines_to_write: uint,
     lines_to_write: uint,
 }
-
-impl Splitter for LineSplitter {
-    fn new(_: Option<LineSplitter>, settings: &Settings) -> Box<Splitter> {
+impl LineSplitter {
+    fn new(settings: &Settings) -> Box<Splitter> {
         let n = match settings.strategy_param.as_slice().parse() {
             Some(a) => a,
             _ => crash!(1, "invalid number of lines")
@@ -148,7 +147,9 @@ impl Splitter for LineSplitter {
             lines_to_write: n,
         } as Box<Splitter>
     }
+}
 
+impl Splitter for LineSplitter {
     fn consume(&mut self, control: &mut SplitControl) -> String {
         self.lines_to_write -= 1;
         if self.lines_to_write == 0 {
@@ -165,9 +166,8 @@ struct ByteSplitter {
     break_on_line_end: bool,
     require_whole_line: bool,
 }
-
-impl Splitter for ByteSplitter {
-    fn new(_: Option<ByteSplitter>, settings: &Settings) -> Box<Splitter> {
+impl ByteSplitter {
+    fn new(settings: &Settings) -> Box<Splitter> {
         let mut strategy_param : Vec<char> = settings.strategy_param.chars().collect();
         let suffix = strategy_param.pop().unwrap();
         let multiplier = match suffix {
@@ -195,7 +195,9 @@ impl Splitter for ByteSplitter {
             require_whole_line: false,
         } as Box<Splitter>
     }
+}
 
+impl Splitter for ByteSplitter {
     fn consume(&mut self, control: &mut SplitControl) -> String {
         let line = control.current_line.clone();
         let n = std::cmp::min(line.as_slice().chars().count(), self.bytes_to_write);
@@ -262,8 +264,8 @@ fn split(settings: &Settings) -> int {
 
     let mut splitter: Box<Splitter> =
         match settings.strategy.as_slice() {
-            "l" => Splitter::new(None::<LineSplitter>, settings),
-            "b" | "C" => Splitter::new(None::<ByteSplitter>, settings),
+            "l" => LineSplitter::new(settings),
+            "b" | "C" => ByteSplitter::new(settings),
             a @ _ => crash!(1, "strategy {} not supported", a)
         };
 
